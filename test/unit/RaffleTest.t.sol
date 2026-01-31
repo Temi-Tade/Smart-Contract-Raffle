@@ -104,7 +104,7 @@ contract RaffleTest is CodeConstants, Test {
         vm.warp(block.timestamp + interval + 1); // sets block.timestamp
         vm.roll(block.number + 1); // sets block number
         // act
-        (bool upkeepNeeded, ) = raffle.checkUpkeep("");
+        (bool upkeepNeeded,) = raffle.checkUpkeep("");
         // assert
         assert(!upkeepNeeded);
     }
@@ -117,7 +117,7 @@ contract RaffleTest is CodeConstants, Test {
         vm.roll(block.number + 1); // sets block number
         raffle.performUpkeep("");
         // act
-        (bool upkeepNeeded, ) = raffle.checkUpkeep("");
+        (bool upkeepNeeded,) = raffle.checkUpkeep("");
         // assert
         assert(!upkeepNeeded);
     }
@@ -132,7 +132,7 @@ contract RaffleTest is CodeConstants, Test {
         // vm.roll(block.number + 1);
         // raffle.performUpkeep("");
         // act
-        (bool upkeepNeeded, ) = raffle.checkUpkeep("");
+        (bool upkeepNeeded,) = raffle.checkUpkeep("");
         // assert
         assert(!upkeepNeeded);
     }
@@ -144,7 +144,7 @@ contract RaffleTest is CodeConstants, Test {
         vm.warp(block.timestamp + interval + 1);
         vm.roll(block.number + 1);
         // act
-        (bool upkeepNeeded, ) = raffle.checkUpkeep("");
+        (bool upkeepNeeded,) = raffle.checkUpkeep("");
         // assert
         assert(upkeepNeeded);
     }
@@ -159,7 +159,7 @@ contract RaffleTest is CodeConstants, Test {
         raffle.enterRaffle{value: entranceFee}();
         vm.warp(block.timestamp + interval + 1);
         vm.roll(block.number + 1);
-        
+
         // act / assert
         raffle.performUpkeep(""); // it doesn't revert
     }
@@ -173,7 +173,9 @@ contract RaffleTest is CodeConstants, Test {
         uint256 numPlayers = raffle.getNumberOfPlayers();
         Raffle.RaffleState currentRaffleState = raffle.getRaffleState();
         vm.expectRevert(
-            abi.encodeWithSelector(Raffle.Raffle__UpkeepNotNeeded.selector, currentBalance, numPlayers, currentRaffleState)
+            abi.encodeWithSelector(
+                Raffle.Raffle__UpkeepNotNeeded.selector, currentBalance, numPlayers, currentRaffleState
+            )
         );
         raffle.performUpkeep("");
     }
@@ -212,7 +214,11 @@ contract RaffleTest is CodeConstants, Test {
         _;
     }
 
-    function testFulfillRandomWordsCanOnlyBeCalledAfterPerfomUpkeep(uint256 randomRequestId) public raffleEntered skipFork {
+    function testFulfillRandomWordsCanOnlyBeCalledAfterPerfomUpkeep(uint256 randomRequestId)
+        public
+        raffleEntered
+        skipFork
+    {
         // arrange / act / assert
         vm.expectRevert(VRFCoordinatorV2_5Mock.InvalidRequest.selector);
         VRFCoordinatorV2_5Mock(vrfCoordinator).fulfillRandomWords(randomRequestId, address(raffle));
@@ -220,7 +226,7 @@ contract RaffleTest is CodeConstants, Test {
 
     function testFulfillRandomWordsPicksWinnerAndSendsMoney() public raffleEntered skipFork {
         // arrange
-        uint256 additionalEntrants = 3;  // 4 players in total
+        uint256 additionalEntrants = 3; // 4 players in total
         uint256 startingIndex = 1;
         address expectedWinner = address(1);
 

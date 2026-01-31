@@ -37,21 +37,21 @@ contract HelperConfig is CodeConstants, Script {
         networkConfigs[ETH_SEPOLIA_CHAIN_ID] = getSepoliaEthConfig();
     }
 
-    function getConfigByChainId(uint256 chainId) public returns(NetworkConfig memory) {
-        if(networkConfigs[chainId].vrfCoordinator != address(0)) {
+    function getConfigByChainId(uint256 chainId) public returns (NetworkConfig memory) {
+        if (networkConfigs[chainId].vrfCoordinator != address(0)) {
             return networkConfigs[chainId];
-        } else if(chainId == LOCAL_CHAIN_ID) {
+        } else if (chainId == LOCAL_CHAIN_ID) {
             return getOrCreateAnvilEthConfig();
         } else {
             revert HelperConfig__InvalidChainId();
         }
     }
 
-    function getConfig() public returns(NetworkConfig memory) {
+    function getConfig() public returns (NetworkConfig memory) {
         return getConfigByChainId(block.chainid);
     }
 
-    function getSepoliaEthConfig() public pure returns(NetworkConfig memory) {
+    function getSepoliaEthConfig() public pure returns (NetworkConfig memory) {
         return NetworkConfig({
             entranceFee: 0.01 ether,
             interval: 30, // seconds
@@ -64,14 +64,15 @@ contract HelperConfig is CodeConstants, Script {
         });
     }
 
-    function getOrCreateAnvilEthConfig() public returns(NetworkConfig memory) {
+    function getOrCreateAnvilEthConfig() public returns (NetworkConfig memory) {
         // check to see if active network config has been set
         if (localNetworkConfig.vrfCoordinator != address(0)) {
             return localNetworkConfig;
         }
         // deploy mocks
         vm.startBroadcast();
-        VRFCoordinatorV2_5Mock vrfCoordinatorMock = new VRFCoordinatorV2_5Mock(MOCK_BASE_FEE, MOCK_GAS_PRICE_LINK, MOCK_WEI_PER_UINT_LINK);
+        VRFCoordinatorV2_5Mock vrfCoordinatorMock =
+            new VRFCoordinatorV2_5Mock(MOCK_BASE_FEE, MOCK_GAS_PRICE_LINK, MOCK_WEI_PER_UINT_LINK);
         LinkToken linkToken = new LinkToken();
         vm.stopBroadcast();
 
@@ -84,7 +85,7 @@ contract HelperConfig is CodeConstants, Script {
             callbackGasLimit: 500000,
             subscriptionId: 0, //might have to fix this
             link: address(linkToken),
-            account:0x1804c8AB1F12E6bbf3894d4083f33e07309d1f38
+            account: 0x1804c8AB1F12E6bbf3894d4083f33e07309d1f38
         });
         return localNetworkConfig;
     }

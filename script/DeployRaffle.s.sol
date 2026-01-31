@@ -7,11 +7,11 @@ import {HelperConfig} from "./HelperConfig.s.sol";
 import {CreateSubscription, FundSubscription, AddConsumer} from "./Interactions.s.sol";
 
 contract DeployRaffle is Script {
-    function run() public returns(Raffle, HelperConfig) {
+    function run() public returns (Raffle, HelperConfig) {
         return deployContract();
     }
 
-    function deployContract() public returns(Raffle, HelperConfig) {
+    function deployContract() public returns (Raffle, HelperConfig) {
         HelperConfig helperConfig = new HelperConfig();
         // local => deploy mocks, get local config
         // sepolia => get sepolia config
@@ -20,7 +20,8 @@ contract DeployRaffle is Script {
         if (config.subscriptionId == 0) {
             // create sub
             CreateSubscription createSubscription = new CreateSubscription();
-            (config.subscriptionId, config.vrfCoordinator) = createSubscription.createSubscription(config.vrfCoordinator, config.account);
+            (config.subscriptionId, config.vrfCoordinator) =
+                createSubscription.createSubscription(config.vrfCoordinator, config.account);
 
             // fund sub
             FundSubscription fundSubscription = new FundSubscription();
@@ -42,6 +43,6 @@ contract DeployRaffle is Script {
         AddConsumer addConsumer = new AddConsumer();
         addConsumer.addConsumer(address(raffle), config.vrfCoordinator, config.subscriptionId, config.account);
 
-        return(raffle, helperConfig);
+        return (raffle, helperConfig);
     }
 }
